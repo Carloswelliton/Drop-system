@@ -7,6 +7,6 @@ import com.ceneged.backend.models.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
 
-  UserDetails findByLogin(String username);
+  UserDetails findByUsername(String username);
   
 }
