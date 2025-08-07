@@ -10,6 +10,4 @@ public class TestController {
   public String test() {
       return "Backend funcionando";
   }
-  
-  
 }
