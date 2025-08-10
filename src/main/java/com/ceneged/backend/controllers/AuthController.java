@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ceneged.backend.DTO.DadosAuth;
+import com.ceneged.backend.config.security.TokenService;
+import com.ceneged.backend.models.User;
 
 import jakarta.validation.Valid;
 
@@ -20,11 +22,14 @@ public class AuthController {
   @Autowired
   private AuthenticationManager manager;
 
+  @Autowired
+  private TokenService tokenService;
+
   @PostMapping
-  public ResponseEntity efetuarLogin(@RequestBody @Valid DadosAuth dados){
+  public ResponseEntity<String> efetuarLogin(@RequestBody @Valid DadosAuth dados){
     var token = new UsernamePasswordAuthenticationToken(dados.username(), dados.password());
     var authentication = manager.authenticate(token); 
 
-    return ResponseEntity.ok().build();
+    return ResponseEntity.ok(tokenService.gerarToken((User) authentication.getPrincipal()));
   }
 }
