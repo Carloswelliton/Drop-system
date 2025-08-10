@@ -5,11 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ceneged.backend.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -63,7 +61,7 @@ public class User implements UserDetails{
     this.username = user.username();
     this.email = user.email();
     this.password = passwordEncoder;
-    this.roles.add(Roles.valueOf(user.role().toUpperCase()));
+    this.roles.add(user.role());
   }
 
 

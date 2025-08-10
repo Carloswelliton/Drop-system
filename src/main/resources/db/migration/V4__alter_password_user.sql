@@ -1,3 +1,0 @@
-UPDATE usuarios
-SET password = '$2a$10$Yb8OnPFEiwHJPdaFOyGHVe0mJ3M9W8oBAzTxC4NEI55x8F5qqGm6G'
-WHERE id = 3;

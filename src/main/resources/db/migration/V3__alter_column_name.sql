@@ -1,0 +1,1 @@
+ALTER TABLE user_roles RENAME COLUMN usuario_id TO user_id;
