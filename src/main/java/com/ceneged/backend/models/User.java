@@ -2,13 +2,16 @@ package com.ceneged.backend.models;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.ceneged.backend.DTO.UserDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
@@ -46,17 +49,29 @@ public class User implements UserDetails{
   @Email
   private String email;
 
-  @Column(nullable = false, unique = true)
+  @Column(nullable = false)
   @JsonProperty(access = Access.WRITE_ONLY)
+  @Size(min =6, max=254)
   private String password;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @Enumerated(EnumType.STRING)
   private Set<Roles> roles = new HashSet<>();
 
+
+  public User(UserDTO user, String passwordEncoder){
+    this.username = user.username();
+    this.email = user.email();
+    this.password = passwordEncoder;
+    this.roles.add(Roles.valueOf(user.role().toUpperCase()));
+  }
+
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    return roles.stream()
+    .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
+    .collect(Collectors.toList());
   }
 
   @Override
