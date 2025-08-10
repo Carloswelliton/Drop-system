@@ -30,6 +30,9 @@ public class UserController {
   @Transactional
   public ResponseEntity<String> createUsers(@RequestBody @Valid UserDTO userDTO){
     try {
+      if(userDTO.username().length()<6){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must have at least 6 characters");
+      }
       String encodedPassword = passwordEncoder.encode(userDTO.password());
       userRepository.save(new User(userDTO, encodedPassword));
       return ResponseEntity.status(HttpStatus.CREATED).body("User created");
