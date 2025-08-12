@@ -20,7 +20,6 @@ public class TokenService {
 
   //configurando o Auth0 para retornar um token
   public String gerarToken(User user){
-    System.out.println(secret);
     try {
     var algoritmo = Algorithm.HMAC256(secret);
     return JWT.create()

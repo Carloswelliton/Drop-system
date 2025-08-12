@@ -1,9 +1,12 @@
 package com.ceneged.backend.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +44,12 @@ public class UserController {
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("erro creating a new user: "+ e.getMessage());
     }
+  }
+
+  @GetMapping("listar")
+  @Transactional
+  public ResponseEntity<List<User>> listarUsuarios(){
+    List<User> listar = userRepository.findAll();
+    return ResponseEntity.ok().body(listar);
   }
 }
