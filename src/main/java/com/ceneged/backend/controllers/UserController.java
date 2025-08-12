@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ceneged.backend.DTO.UserDTO;
 import com.ceneged.backend.models.User;
 import com.ceneged.backend.repository.UserRepository;
+import com.ceneged.backend.service.UserService;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -24,20 +25,17 @@ import jakarta.validation.Valid;
 @RequestMapping("users")
 public class UserController {
 
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+  private final UserService userService;
+  
+  public UserController(UserService userService){
+    this.userService = userService;
+  }
 
   @PostMapping("/create")
   @Transactional
   public ResponseEntity<String> createUsers(@RequestBody @Valid UserDTO userDTO){
     try {
-      if(userDTO.username().length()<6){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username must have at least 6 characters");
-      }
-      String encodedPassword = passwordEncoder.encode(userDTO.password());
-      userRepository.save(new User(userDTO, encodedPassword));
+      userService.criarUsuario(userDTO);
       return ResponseEntity.status(HttpStatus.CREATED).body("User created");
     }catch(IllegalArgumentException e){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid role: " + e.getMessage());
@@ -49,7 +47,7 @@ public class UserController {
   @GetMapping("listar")
   @Transactional
   public ResponseEntity<List<User>> listarUsuarios(){
-    List<User> listar = userRepository.findAll();
+    List<User> listar = userService.listarUsuarios();
     return ResponseEntity.ok().body(listar);
   }
 }
