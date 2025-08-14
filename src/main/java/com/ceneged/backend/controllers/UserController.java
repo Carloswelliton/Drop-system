@@ -41,7 +41,7 @@ public class UserController {
     }
   }
 
-  @GetMapping("listar")
+  @GetMapping
   @Transactional
   public ResponseEntity<List<User>> listarUsuarios(){
     List<User> listar = userService.listarUsuarios();
