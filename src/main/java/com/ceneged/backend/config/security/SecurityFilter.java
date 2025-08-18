@@ -11,7 +11,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ceneged.backend.repository.UserRepository;
 
-import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +40,8 @@ public class SecurityFilter extends OncePerRequestFilter{
       var subject = tokenService.getSubject(tokenjWT);
       //recuperando o usuario
       var usuario = repository.findByUsername(subject);
-      //carrega o usuario do bando de dados e força uma autenticação
-      var authentication = new UsernamePasswordAuthenticationToken(usuario, usuario.getAuthorities(), null);
+      //carrega o usuario do banco de dados e força uma autenticação
+      var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
       //Aqui o Spring te considera logado
       SecurityContextHolder.getContext().setAuthentication(authentication);
     }

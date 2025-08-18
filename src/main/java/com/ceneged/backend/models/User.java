@@ -23,8 +23,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,16 +38,13 @@ public class User implements UserDetails{
   private Long id;
 
   @Column(nullable = false, unique = true)
-  @Size(min = 6, max = 30)
   private String username;
   
   @Column(nullable = false, unique = true)
-  @Email
   private String email;
 
   @Column(nullable = false)
   @JsonProperty(access = Access.WRITE_ONLY)
-  @Size(min =6, max=254)
   private String password;
 
   @ElementCollection(fetch = FetchType.EAGER)
@@ -57,10 +52,10 @@ public class User implements UserDetails{
   private Set<Roles> roles = new HashSet<>();
 
 
-  public User(UserDTO user, String passwordEncoder){
+  public User(UserDTO user, String encondedPassword){
     this.username = user.username();
     this.email = user.email();
-    this.password = passwordEncoder;
+    this.password = encondedPassword;
     this.roles.add(user.role());
   }
 

@@ -19,14 +19,24 @@ public class TokenService {
   @Value("${api.security.token.secret}")
   private String secret;
 
-  //configurando o Auth0 para retornar um token
+  //configurando o Auth0 para criar um token
   public String gerarToken(User user){
     try {
     var algoritmo = Algorithm.HMAC256(secret);
     return JWT.create()
         .withIssuer("drop-system")
+        //passa o nome do usuario para o token
         .withSubject(user.getUsername())
+
+        /*Passa o Role do usuario pra o token
+        necessario trabalhar com .map() pois o Roles em Users é um HashSet<>()*/
+        .withClaim("roles", user.getRoles()
+        .stream().map(Enum::name).toList())
+
+        //define a data de expiração do token
         .withExpiresAt(dataExpiracao())
+
+        //manda todas as informações para a variavel algoritmo que hasheia o token
         .sign(algoritmo);
     } catch (JWTCreationException exception){
         throw new RuntimeException("erro ao gerar token jwt", exception);
