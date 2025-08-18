@@ -30,8 +30,7 @@ public class TokenService {
 
         /*Passa o Role do usuario pra o token
         necessario trabalhar com .map() pois o Roles em Users é um HashSet<>()*/
-        .withClaim("roles", user.getRoles()
-        .stream().map(Enum::name).toList())
+        .withClaim("roles", user.getRoles().stream().map(Enum::name).toList())
 
         //define a data de expiração do token
         .withExpiresAt(dataExpiracao())
