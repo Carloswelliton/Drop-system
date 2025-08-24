@@ -34,11 +34,13 @@ public class UserService {
 
   public Optional<User> getUserById(String userId){
     return userRepository.findById(Long.parseLong(userId));
-
-    
   }
 
-
-
-
+  public void deleteById(String userId){
+    var id = Long.parseLong(userId);
+    var userExist = userRepository.existsById(id);
+    if(userExist){
+      userRepository.deleteById(id);
+    }
+  }
 }
