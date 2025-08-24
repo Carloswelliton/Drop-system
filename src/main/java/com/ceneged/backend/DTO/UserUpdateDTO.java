@@ -1,10 +1,12 @@
 package com.ceneged.backend.DTO;
 
-import jakarta.validation.constraints.NotNull;
+import com.ceneged.backend.models.Roles;
 
-public record UserUpdateDTO(
-  @NotNull Long id, 
-  String username, 
+import jakarta.validation.constraints.Size;
+
+public record UserUpdateDTO( 
+  @Size(min=6)String username, 
+  @Size(min=6,max=254)String password,
   String email, 
-  String role
+  Roles role
 ) {}

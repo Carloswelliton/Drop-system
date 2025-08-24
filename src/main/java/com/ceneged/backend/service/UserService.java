@@ -1,5 +1,6 @@
 package com.ceneged.backend.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ceneged.backend.DTO.UserDTO;
+import com.ceneged.backend.DTO.UserUpdateDTO;
 import com.ceneged.backend.models.User;
 import com.ceneged.backend.repository.UserRepository;
 
@@ -42,5 +44,26 @@ public class UserService {
     if(userExist){
       userRepository.deleteById(id);
     }
+  }
+
+  public void updateUserById(String userId, UserUpdateDTO updatedUser){
+    var id = Long.parseLong(userId);
+    var userEntity = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not Found" + id));
+
+    if(updatedUser.username() != null){
+      userEntity.setUsername(updatedUser.username());
+    }
+    if(updatedUser.email() != null){
+      userEntity.setEmail(updatedUser.email());
+    }
+    if(updatedUser.role() != null){
+      userEntity.setRoles(new HashSet<>(List.of(updatedUser.role())));
+    }
+    if(updatedUser.password() != null){
+      String encodedPassword = passwordEncoder.encode(updatedUser.password());
+      userEntity.setPassword(encodedPassword);
+    }
+    userRepository.save(userEntity);
+      
   }
 }

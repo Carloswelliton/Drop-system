@@ -17,14 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ceneged.backend.DTO.UserDTO;
 import com.ceneged.backend.DTO.UserUpdateDTO;
 import com.ceneged.backend.models.User;
-import com.ceneged.backend.repository.UserRepository;
 import com.ceneged.backend.service.UserService;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestParam;
-
-
 
 
 @RestController
@@ -32,17 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
   @Autowired
-  private final UserService userService;
-
-  @Autowired
-  private final UserRepository userRepository;
-
-  
-  
-  public UserController(UserService userService, UserRepository userRepository){
-    this.userService = userService;
-    this.userRepository = userRepository;
-  }
+  private  UserService userService;
 
   @PostMapping
   @Transactional
@@ -75,10 +61,15 @@ public class UserController {
     }
   }
 
-
   @DeleteMapping("/{userId}")
   public ResponseEntity<Void> deletebyId(@PathVariable("userId") String userId){
     userService.deleteById(userId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @PutMapping("/{userId}")
+  public ResponseEntity<Void> updateUserById(@PathVariable("userId") String userId, @RequestBody UserUpdateDTO updateUserDTO){
+    userService.updateUserById(userId, updateUserDTO);
     return ResponseEntity.noContent().build();
   }
 }
