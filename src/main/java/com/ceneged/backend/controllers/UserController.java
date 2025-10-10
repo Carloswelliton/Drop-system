@@ -72,4 +72,6 @@ public class UserController {
     userService.updateUserById(userId, updateUserDTO);
     return ResponseEntity.noContent().build();
   }
+
+  
 }

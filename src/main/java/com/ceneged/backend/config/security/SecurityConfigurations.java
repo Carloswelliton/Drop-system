@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import jakarta.servlet.http.HttpServletResponse;
+
 
 @Configuration
 @EnableWebSecurity
@@ -25,10 +27,16 @@ public class SecurityConfigurations {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
     return http.csrf(csrf -> csrf.disable())
     .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+  
+    .exceptionHandling(ex -> {
+      ex.authenticationEntryPoint((req, res, authEx) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));
+      ex.accessDeniedHandler((req, res, accessEx) -> res.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden"));
+    })
     .authorizeHttpRequests(req -> {
       //indica quais usuarios podem acessar as rotas
       req.requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll();
-      req.requestMatchers(HttpMethod.POST, "/users").hasRole("GESTOR");
+       // req.requestMatchers(HttpMethod.POST, "/users").permitAll(); // descomentar quando for necessário criar um novo user sem usar o flyway
+      req.requestMatchers("/users/**").hasRole("GESTOR");
       req.anyRequest().authenticated();
     })
     .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

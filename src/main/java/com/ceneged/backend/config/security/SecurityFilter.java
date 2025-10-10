@@ -32,29 +32,33 @@ public class SecurityFilter extends OncePerRequestFilter{
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
   throws ServletException, IOException {
-
     var tokenjWT = recuperarToken(request);
-
     if(tokenjWT != null){
-      //recuperando o token no cabeçalho
-      var subject = tokenService.getSubject(tokenjWT);
-      //recuperando o usuario
-      var usuario = repository.findByUsername(subject);
-      //carrega o usuario do banco de dados e força uma autenticação
-      var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-      //Aqui o Spring te considera logado
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+      try {
+        //recuperando o token no cabeçalho
+        var subject  = tokenService.getSubject(tokenjWT);
+        if(subject != null){
+          //recuperando o usuario
+          var usuario = repository.findByUsername(subject);
+          if(usuario != null){
+            //carrega o usuario do banco de dados e força uma autenticação
+            var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            //Aqui o Spring te considera logado
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+          }
+        }
+      } catch (Exception e) {
+        throw new RuntimeException("ocorreu um erro ao obter dados");
+      }
     }
-    
     filterChain.doFilter(request, response);
-    
   }
 
   // Bloqueando as requisições para que seeja necessário passar o Token
   private String recuperarToken(HttpServletRequest request) {
     var authorizationHeader = request.getHeader("Authorization");
-    if (authorizationHeader != null) {
-      return authorizationHeader.replace("Bearer ","");
+    if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+      return authorizationHeader.substring(7);
     }
     return null;
     
