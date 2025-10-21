@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +27,13 @@ public class AuthController {
   @Autowired
   private TokenService tokenService;
 
-  @PostMapping
+  @PostMapping("/login")
   public ResponseEntity<TokenJWT> efetuarLogin(@RequestBody @Valid DadosAuth dados){
     var token = new UsernamePasswordAuthenticationToken(dados.username(), dados.password());
     var authentication = manager.authenticate(token); 
     String tokenJwt = tokenService.gerarToken((User) authentication.getPrincipal());
     return ResponseEntity.ok(new TokenJWT(tokenJwt));
   }
+
+
 }
